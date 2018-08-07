@@ -4,23 +4,17 @@ import re
 
 def getpage(url):
 	return urllib.urlopen(url)
-#href=\"https:.*\"
+
 def geturlformpage(content):
-	pattern=re.compile(r'^http.*\.(gz|pdf)$');
+	pattern=re.compile(r'^http.*\.(gz|pdf|.ico)$');
 	allurl=re.findall(r'.*?\"(https://.*?)\"',content,re.M|re.X|re.I);
-	for i in allurl:
-		pass
-		print i
-	for i in allurl:
+	#allurl[:]是 allurl 的一个内存拷贝
+	for i in allurl[:]:
 		if re.match(pattern,i.strip()):
-			#print i
 			allurl.remove(i)
-	print len(allurl)
-	for i in allurl:
-		pass	
-		print i
 	return allurl
 if __name__ == '__main__':
 	allpage=getpage("https://gcc.gnu.org/onlinedocs/").read();
-	geturlformpage(allpage.replace('\n','').replace('\t','').replace(' ',''))
+	for i in geturlformpage(allpage.replace('\n','').replace('\t','').replace(' ','')):
+		print i
 	
