@@ -19,13 +19,13 @@ class EachPage:
 	def addList(listurl):
 		return urlList.extend(listurl);
 	
-	def conut():
+	def conut(self):
 		return len(urlList)
 	
-	def geturlList():
+	def geturlList(self):
 		return urlList;
 	
-	def getLocalUrl():
+	def getLocalUrl(self):
 		return self.url;
 	
 	def setLocalUrl(url):
@@ -40,15 +40,18 @@ def getpage(url):
 	return urllib.urlopen(url).read();
 
 def getallurlformpage(content):
-	allurl=re.findall(r'.*?\"(https://.*?)\"',content.replace('\n','').replace('\t','').replace(' ',''),re.M|re.X|re.I);
+	allurl=re.findall(r'.*?(href=\".*?\")',content.replace('\n','').replace('\t','').replace(' ',''),re.M|re.X|re.I);
 	return  allurl
 	#allurl[:]是 allurl 的一个内存拷贝
 	
 def getcurrenturl(url):
 	url_temp=url;
-	pattern=re.compile(r'^http.*\.(gz|pdf|ico|css)$');
+	pattern_del=re.compile(r'*\.(gz|pdf|ico|css)$');
+	pattern_http=re.compile(r'^href=\"(http:.*)\"');
+	pattern_join=re.compile(r'^href=\"([^http])\"');
+	#TODO 将HTTP开头的URL 和需要连接的URL 提取出来
 	for i in url_temp[:]:
-		if re.match(pattern,i.strip()):
+		if re.match(pattern_del,i.strip()):
 			url_temp.remove(i)
 	return url_temp
 	
@@ -56,15 +59,19 @@ def Geturl(url):
 	allpage=getpage(url);
 	allurl=getallurlformpage(allpage);
 	currenturl=getcurrenturl(allurl);
+	for i in currenturl:
+		print i
 	return currenturl;
 
 def RecursiveGetUrl(url):
 	if not head.getLocalUrl():
 		head.setLocalUrl(url);
-	print head.getLocalUrl()
+	print "==============================="
+	print "headurl :"+url
+	print "this page have this urls:"
 	url=Geturl(url);
 	for i in url:
-		print i
+		print i 
 		if i:
 			RecursiveGetUrl(i)
 	
